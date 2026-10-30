@@ -1,171 +1,955 @@
 <!doctype html>
-<html lang="es"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Reloj de Gimnasio</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&display=swap">
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>IRON CLOCK // HARDCORE GYM TIMER</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Chakra+Petch:wght@500;700;800&family=JetBrains+Mono:wght@700;800&display=swap" rel="stylesheet">
+
 <style>
-:root{--bg:#f4f5f7;--card:#fff;--tx:#14171c;--mu:#6b7280;--ac:#2563eb;--bd:#dfe3e8;--dg:#dc2626;--fn:"Barlow Condensed",Impact,"Arial Narrow",sans-serif;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1116;--card:#181c23;--tx:#eef0f3;--mu:#98a1ae;--bd:#2a303a;--ac:#5b8def}}
-:root[data-theme="dark"]{--bg:#0e1116;--card:#181c23;--tx:#eef0f3;--mu:#98a1ae;--bd:#2a303a;--ac:#5b8def}
-html,body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.4 system-ui,-apple-system,sans-serif}
-body{min-height:100vh;transition:background .25s}
-body.w{background:#b4ff4f}body.r{background:#ef4b3a}body.p{background:#fff35c}body.d{background:#2b2f36}
-main{max-width:520px;margin:0 auto;padding:16px}main.pl{max-width:none;padding:0}
-h1{font-size:22px;margin:4px 0 14px}
-button{font:inherit;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:10px;padding:10px 14px;cursor:pointer}
-button.pri{background:var(--ac);color:#fff;border-color:var(--ac);width:100%;font-weight:600;margin-top:10px}
-button.dg{color:var(--dg)}
-input{font:inherit;color:var(--tx);background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:8px;min-width:0;box-sizing:border-box}
-.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:12px;margin-bottom:10px}
-.row{display:flex;gap:6px;align-items:center}.row input{flex:1}
-.grid{display:grid;grid-template-columns:1fr 1fr 70px;gap:8px;margin-top:10px}
-label{font-size:12px;color:var(--mu);display:flex;flex-direction:column;gap:4px}
-.tt{display:flex;align-items:center;gap:3px;color:var(--tx)}.tt input{width:100%;text-align:center}
-.grid>label>input{text-align:center}
-.big{width:100%;font-size:20px;font-weight:600;margin:6px 0 12px}
-.mu{color:var(--mu);font-size:14px}.sp{display:flex;justify-content:space-between;align-items:center;gap:8px}
-.acts{display:flex;gap:6px;margin-top:10px}.acts button{flex:1;padding:8px 4px;font-size:14px}
-.set{display:flex;flex-wrap:wrap;gap:6px 16px;margin:6px 0 14px;align-items:center}.set label{flex-direction:row;align-items:center;color:var(--tx);font-size:14px}
-.set input[type=range]{padding:0;width:110px}
-/* pantalla de entrenamiento */
-#fl{position:fixed;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:9}#fl.on{animation:fl .5s}@keyframes fl{from{opacity:.9}to{opacity:0}}
-#play{font-family:var(--fn);color:#0a0a0a;text-transform:uppercase}
-body.r #play,body.d #play{color:#fff}
-.pw{min-height:100vh;min-height:100dvh;display:grid;grid-template-rows:1fr auto}
-.mn{display:flex;flex-direction:column;justify-content:center;text-align:center;padding:14px 16px 0;gap:4px;min-width:0}
-.top{display:flex;justify-content:space-between;font-size:22px;font-weight:800;opacity:.8}
-.nm{font-size:34px;font-weight:900;line-height:1.05;word-break:break-word}
-#tm{font-size:min(36vw,26vh);font-weight:900;line-height:.95;font-variant-numeric:tabular-nums}
-#bar{height:10px;background:rgba(0,0,0,.18);border-radius:5px;overflow:hidden;margin:6px 0}#bar i{display:block;height:100%;background:currentColor;width:0}
-.up{font-size:22px;font-weight:800;padding:10px;border-radius:10px;background:rgba(0,0,0,.18);margin-bottom:10px}
-.up.w{background:#b4ff4f;color:#0a0a0a}.up.r{background:#ef4b3a;color:#fff}.up.p{background:#fff35c;color:#0a0a0a}
-.sd{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));background:rgba(0,0,0,.2);color:#fff}
-.sr{text-align:center;line-height:1}.sr small{display:block;font-size:14px;opacity:.8;font-weight:700}.sr b{font-size:56px;font-weight:900}
-.ctl{display:flex;gap:8px}
-#play button{background:rgba(255,255,255,.2);color:#fff;border:0;font:inherit;font-size:26px;padding:10px 16px;border-radius:12px}
-#play button.st{font-size:18px;font-weight:800;background:rgba(0,0,0,.35)}
-@media(orientation:landscape) and (max-height:540px){
-.pw{grid-template-rows:none;grid-template-columns:1fr 170px}
-.sd{flex-direction:column;justify-content:center;padding:10px}
-.ctl{flex-wrap:wrap;justify-content:center}
-#tm{font-size:min(34vh,26vw)}.nm{font-size:26px}.top{font-size:18px}.up{font-size:18px;padding:6px}}
-</style></head><body>
+:root {
+  --bg-deep: #08090b;
+  --panel: #111317;
+  --panel-border: #222731;
+  --panel-active: #1a1e26;
+
+  --tx-main: #f3f4f6;
+  --tx-muted: #848e9f;
+  --tx-dark: #4b5568;
+
+  --volt: #ceff00;
+  --volt-glow: rgba(206, 255, 0, 0.25);
+  --danger: #ff253a;
+  --danger-glow: rgba(255, 37, 58, 0.25);
+  --warning: #ffb000;
+  --warning-glow: rgba(255, 176, 0, 0.25);
+
+  --font-display: "Bebas Neue", sans-serif;
+  --font-hud: "Chakra Petch", monospace;
+  --font-mono: "JetBrains Mono", monospace;
+
+  --corner: 4px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background-color: var(--bg-deep);
+  background-image: 
+    linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+  background-size: 24px 24px;
+  color: var(--tx-main);
+  font-family: var(--font-hud);
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+}
+
+main {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 14px 14px calc(24px + env(safe-area-inset-bottom, 0px));
+  flex: 1;
+}
+main.pl { max-width: none; padding: 0; }
+
+/* Botones Compactos & Tácticos */
+button {
+  font-family: var(--font-hud);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border: 1px solid var(--panel-border);
+  background: var(--panel);
+  color: var(--tx-main);
+  border-radius: var(--corner);
+  padding: 8px 12px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all .1s ease;
+  user-select: none;
+}
+button:active {
+  transform: translateY(1px);
+  background: var(--panel-active);
+}
+button.pri-volt {
+  background: var(--volt);
+  color: #000;
+  border-color: #e5ff4d;
+  box-shadow: 0 0 14px var(--volt-glow);
+  font-weight: 800;
+}
+button.pri-volt:active { background: #b8e600; }
+button.dg {
+  border-color: rgba(255, 37, 58, 0.3);
+  color: var(--danger);
+  background: rgba(255, 37, 58, 0.05);
+}
+button.dg:active { background: rgba(255, 37, 58, 0.15); }
+
+/* Inputs duros tipo consola */
+input, select {
+  font-family: var(--font-hud);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--tx-main);
+  background: #0d0e12;
+  border: 1px solid var(--panel-border);
+  border-radius: var(--corner);
+  padding: 8px 10px;
+  outline: none;
+}
+input:focus, select:focus {
+  border-color: var(--volt);
+  box-shadow: 0 0 8px var(--volt-glow);
+}
+
+/* Encabezados y títulos */
+.brand-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  border-bottom: 2px solid var(--panel-border);
+  padding-bottom: 10px;
+  margin-bottom: 14px;
+}
+h1 {
+  font-family: var(--font-display);
+  font-size: 32px;
+  letter-spacing: 0.06em;
+  line-height: 0.9;
+  margin: 0;
+}
+.brand-tag {
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--volt);
+  letter-spacing: 0.15em;
+}
+
+/* Tarjetas de Rutinas */
+.card {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--corner);
+  padding: 12px;
+  margin-bottom: 10px;
+  position: relative;
+}
+.card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; width: 3px; height: 100%;
+  background: var(--panel-border);
+}
+.card.active-card::before { background: var(--volt); }
+
+.routine-title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  letter-spacing: 0.04em;
+  margin: 0 0 4px;
+}
+.routine-meta {
+  display: flex;
+  gap: 12px;
+  font-size: 11px;
+  color: var(--tx-muted);
+  text-transform: uppercase;
+}
+.btn-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 34px;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+/* Editor */
+.editor-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.routine-input {
+  width: 100%;
+  font-family: var(--font-display);
+  font-size: 26px;
+  letter-spacing: 0.04em;
+  padding: 6px 10px;
+  margin-bottom: 12px;
+}
+.grid-time {
+  display: grid;
+  grid-template-columns: 1fr 1fr 64px;
+  gap: 6px;
+  margin-top: 8px;
+}
+.grid-time label {
+  font-size: 10px;
+  color: var(--tx-muted);
+  text-transform: uppercase;
+  font-weight: 700;
+}
+.dual-time {
+  display: flex;
+  align-items: center;
+  background: #0d0e12;
+  border: 1px solid var(--panel-border);
+  border-radius: var(--corner);
+  margin-top: 4px;
+}
+.dual-time input {
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: center;
+  padding: 6px 0;
+  font-family: var(--font-mono);
+}
+
+/* Pantalla del Temporizador (HUD Gym Wall Clock) */
+#play {
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background: #07080a;
+}
+body.w #play { box-shadow: inset 0 0 120px rgba(206, 255, 0, 0.08); }
+body.r #play { box-shadow: inset 0 0 120px rgba(255, 37, 58, 0.08); }
+body.p #play { box-shadow: inset 0 0 120px rgba(255, 176, 0, 0.08); }
+
+.hud-layout {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: calc(14px + env(safe-area-inset-top, 0px)) 16px calc(18px + env(safe-area-inset-bottom, 0px));
+  max-width: 520px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.hud-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--panel-border);
+  padding-bottom: 8px;
+}
+.hud-phase-tag {
+  font-family: var(--font-display);
+  font-size: 20px;
+  letter-spacing: 0.1em;
+  padding: 2px 10px;
+  border-radius: var(--corner);
+  text-transform: uppercase;
+}
+body.w .hud-phase-tag { background: var(--volt); color: #000; box-shadow: 0 0 12px var(--volt-glow); }
+body.r .hud-phase-tag { background: var(--danger); color: #fff; box-shadow: 0 0 12px var(--danger-glow); }
+body.p .hud-phase-tag { background: var(--warning); color: #000; box-shadow: 0 0 12px var(--warning-glow); }
+
+.hud-total-time {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--tx-muted);
+}
+
+/* Reloj Digital Gigante */
+.clock-display {
+  text-align: center;
+  margin: auto 0;
+}
+.clock-title {
+  font-family: var(--font-display);
+  font-size: clamp(26px, 7vw, 42px);
+  letter-spacing: 0.05em;
+  margin: 0 0 4px;
+  line-height: 1;
+  color: #fff;
+  text-transform: uppercase;
+}
+.clock-digits {
+  font-family: var(--font-mono);
+  font-size: clamp(74px, 25vw, 126px);
+  font-weight: 800;
+  line-height: 0.88;
+  letter-spacing: -0.04em;
+  color: #fff;
+  text-shadow: 0 0 25px rgba(255,255,255,0.15);
+}
+body.w .clock-digits { color: var(--volt); text-shadow: 0 0 30px var(--volt-glow); }
+body.r .clock-digits { color: var(--danger); text-shadow: 0 0 30px var(--danger-glow); }
+body.p .clock-digits { color: var(--warning); text-shadow: 0 0 30px var(--warning-glow); }
+
+/* Barra táctica de progreso */
+.progress-rail {
+  width: 100%;
+  height: 6px;
+  background: var(--panel-border);
+  border-radius: 2px;
+  overflow: hidden;
+  margin: 18px 0 10px;
+}
+.progress-rail-fill {
+  height: 100%;
+  width: 0%;
+  background: #fff;
+  transition: width .2s linear;
+}
+body.w .progress-rail-fill { background: var(--volt); box-shadow: 0 0 10px var(--volt); }
+body.r .progress-rail-fill { background: var(--danger); box-shadow: 0 0 10px var(--danger); }
+body.p .progress-rail-fill { background: var(--warning); box-shadow: 0 0 10px var(--warning); }
+
+/* Tarjeta "Siguiente bloque" */
+.hud-up-next {
+  background: rgba(17, 19, 23, 0.7);
+  border: 1px dashed var(--panel-border);
+  padding: 8px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+/* Panel Inferior y Botones Reducidos */
+.hud-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.hud-stats-bar {
+  display: flex;
+  justify-content: space-around;
+  background: #0d0f13;
+  border: 1px solid var(--panel-border);
+  padding: 6px;
+  border-radius: var(--corner);
+  font-size: 12px;
+}
+.hud-stats-bar span { font-weight: 800; font-family: var(--font-mono); }
+
+/* Botonera Táctica Compacta */
+.tactical-controls {
+  display: grid;
+  grid-template-columns: 50px 42px 1fr 42px 50px;
+  gap: 6px;
+  align-items: center;
+}
+.tactical-controls button {
+  height: 44px;
+  padding: 0;
+  font-size: 13px;
+  border-radius: var(--corner);
+}
+.btn-main-action {
+  font-family: var(--font-display);
+  font-size: 20px !important;
+  letter-spacing: 0.08em;
+  background: #fff !important;
+  color: #000 !important;
+  border: none !important;
+}
+.btn-main-action:active { background: #dcdcdc !important; }
+
+/* Flash FX */
+#fl { position: fixed; inset: 0; background: #fff; opacity: 0; pointer-events: none; z-index: 99; }
+#fl.on { animation: flashFX .35s cubic-bezier(0.1, 0.9, 0.2, 1); }
+@keyframes flashFX { from { opacity: 0.9; } to { opacity: 0; } }
+
+/* Switch minimal */
+.sw-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--panel-border);
+  font-size: 13px;
+}
+</style>
+</head>
+<body>
+
 <div id="fl"></div>
+
 <main>
-<section id="list"></section>
-<section id="edit" hidden></section>
-<section id="hist" hidden></section>
-<section id="play" hidden></section>
+  <section id="list"></section>
+  <section id="edit" hidden></section>
+  <section id="hist" hidden></section>
+  <section id="cfg" hidden></section>
+  <section id="play" hidden></section>
 </main>
+
 <script>
-const $=s=>document.querySelector(s);
-const uid=()=>Math.random().toString(36).slice(2,9);
-const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const fmt=s=>Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
-const f2=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
-let db={routines:[],set:{},hist:[]};
-try{const d=JSON.parse(localStorage.getItem('gt1'));if(d&&d.routines)db=d}catch(e){}
-db.set=Object.assign({sound:true,voice:true,flash:true,vol:60},db.set);db.hist=db.hist||[];
-if(!db.routines.length)db.routines=[{id:uid(),name:'Ejemplo: Pecho',ex:[{n:'Press de banca',w:90,r:30,s:3},{n:'Aperturas',w:130,r:10,s:2}]}];
-const save=()=>{try{localStorage.setItem('gt1',JSON.stringify(db))}catch(e){}};
-const total=r=>r.ex.reduce((a,e)=>a+(e.w+e.r)*e.s,0);
-let cur=null,P=null,ac=null,wl=null;
+const $ = s => document.querySelector(s);
+const uid = () => Math.random().toString(36).slice(2, 8);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt = s => Math.floor(s/60) + ':' + String(s%60).padStart(2, '0');
+const f2 = s => String(Math.floor(s/60)).padStart(2, '0') + ':' + String(s%60).padStart(2, '0');
 
-function show(v){['list','edit','hist','play'].forEach(x=>$('#'+x).hidden=x!==v);$('main').classList.toggle('pl',v==='play');if(v!=='play')document.body.className='';window.scrollTo(0,0)}
-const lock=()=>{try{navigator.wakeLock.request('screen').then(l=>wl=l).catch(()=>{})}catch(e){}};
-document.addEventListener('visibilitychange',()=>{if(!document.hidden&&P)lock()});
+let db = { routines: [], set: {}, hist: [] };
+try { const d = JSON.parse(localStorage.getItem('gt1')); if(d && d.routines) db = d; } catch(e){}
+db.set = Object.assign({ sound: true, voice: true, flash: true, vol: 80, ek: '', ev: '21m00Tcm4TlvDq8ikWAM' }, db.set);
+db.hist = db.hist || [];
 
-/* sonido, voz, destello */
-function beep(f,d){if(!db.set.sound)return;try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();const o=ac.createOscillator(),g=ac.createGain();o.type='square';o.frequency.value=f;g.gain.value=.35*db.set.vol/100;o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+d)}catch(e){}}
-function say(t){if(!db.set.voice||!window.speechSynthesis)return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='es-ES';u.volume=db.set.vol/100;speechSynthesis.speak(u)}catch(e){}}
-function flash(){if(!db.set.flash)return;const f=$('#fl');f.classList.remove('on');void f.offsetWidth;f.classList.add('on')}
+if(!db.routines.length) {
+  db.routines = [
+    { id: uid(), name: 'PRESS & POWER (PECHO)', ex: [{ n: 'PRESS BANCA PLANO', w: 90, r: 45, s: 4 }, { n: 'FONDOS LASTRADOS', w: 60, r: 30, s: 3 }] },
+    { id: uid(), name: 'TABATA DESTRUCTOR', ex: [{ n: 'BURPEES OVER BAR', w: 20, r: 10, s: 8 }, { n: 'ASSAULT BIKE SPRINT', w: 20, r: 10, s: 8 }] }
+  ];
+}
 
-/* lista */
-function renderList(){
-$('#list').innerHTML=`<div class="sp"><h1>🏋️ Mis rutinas</h1><button data-a="hist">📜 Historial</button></div>
-<div class="set"><label><input type="checkbox" data-s="sound" ${db.set.sound?'checked':''}> Sonido</label><label><input type="checkbox" data-s="voice" ${db.set.voice?'checked':''}> Voz</label><label><input type="checkbox" data-s="flash" ${db.set.flash?'checked':''}> Destello</label><label>Volumen <input type="range" data-s="vol" min="0" max="100" value="${db.set.vol}"></label></div>
-${db.routines.map(r=>`<div class="card"><div class="sp"><b>${esc(r.name)}</b><span class="mu">${r.ex.length} ej. · ${fmt(total(r))}</span></div>
-<div class="acts"><button data-a="go" data-id="${r.id}">▶ Iniciar</button><button data-a="ed" data-id="${r.id}">Editar</button><button data-a="dup" data-id="${r.id}">Copiar</button><button class="dg" data-a="rm" data-id="${r.id}">✕</button></div></div>`).join('')}
-<button class="pri" data-a="new">+ Nueva rutina</button>`}
-$('#list').addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(!b)return;const r=db.routines.find(x=>x.id===b.dataset.id),a=b.dataset.a;
-if(a==='hist'){renderHist();show('hist')}
-else if(a==='new'){const n={id:uid(),name:'Nueva rutina',ex:[{n:'Ejercicio 1',w:60,r:30,s:3}]};db.routines.push(n);save();openEdit(n.id)}
-else if(a==='ed')openEdit(r.id);
-else if(a==='go')start(r);
-else if(a==='dup'){db.routines.push(JSON.parse(JSON.stringify({...r,id:uid(),name:r.name+' (copia)'})));save();renderList()}
-else if(a==='rm'&&confirm('¿Borrar “'+r.name+'”?')){db.routines=db.routines.filter(x=>x!==r);save();renderList()}});
-$('#list').addEventListener('input',e=>{const k=e.target.dataset.s;if(k){db.set[k]=e.target.type==='checkbox'?e.target.checked:+e.target.value;save()}});
-$('#list').addEventListener('change',e=>{if(e.target.dataset.s==='vol'){beep(880,.15);say('Volumen')}});
+const save = () => { try { localStorage.setItem('gt1', JSON.stringify(db)); } catch(e){} };
+const total = r => r.ex.reduce((a, e) => a + (e.w + e.r) * e.s, 0);
 
-/* historial */
-function renderHist(){$('#hist').innerHTML=`<button data-a="back">‹ Rutinas</button><h1>Historial</h1>
-${db.hist.length?db.hist.map(h=>`<div class="card sp"><div><b>${esc(h.n)}</b><div class="mu">${new Date(h.t).toLocaleString('es-CO',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</div></div><b>${fmt(h.d)}</b></div>`).join('')+'<button class="dg" data-a="clr">Borrar historial</button>':'<p class="mu">Aún no has terminado ninguna rutina.</p>'}`}
-$('#hist').addEventListener('click',e=>{const a=e.target.closest('[data-a]')?.dataset.a;
-if(a==='back'){renderList();show('list')}else if(a==='clr'&&confirm('¿Borrar todo el historial?')){db.hist=[];save();renderHist()}});
+let cur = null, P = null, ac = null, wl = null;
 
-/* editor */
-function openEdit(id){cur=db.routines.find(r=>r.id===id);renderEdit();show('edit')}
-function renderEdit(){
-const t=(f,v)=>`<span class="tt"><input data-f="${f}m" type="number" inputmode="numeric" min="0" value="${Math.floor(v/60)}">:<input data-f="${f}s" type="number" inputmode="numeric" min="0" max="59" value="${v%60}"></span>`;
-$('#edit').innerHTML=`<button data-a="back">‹ Rutinas</button>
-<input id="rn" class="big" value="${esc(cur.name)}">
-${cur.ex.map((e,i)=>`<div class="card" data-i="${i}"><div class="row"><input data-f="n" value="${esc(e.n)}" placeholder="Ejercicio"><button data-a="up">↑</button><button data-a="dn">↓</button><button data-a="cp">⧉</button><button class="dg" data-a="del">✕</button></div>
-<div class="grid"><label>Trabajo (min:seg)${t('w',e.w)}</label><label>Descanso (min:seg)${t('r',e.r)}</label><label>Series<input data-f="s" type="number" inputmode="numeric" min="1" value="${e.s}"></label></div></div>`).join('')}
-<button data-a="add" style="width:100%">+ Ejercicio</button>
-<p class="mu" id="tot"></p>
-<button class="pri" data-a="play">▶ Iniciar rutina</button>`;tot()}
-const tot=()=>{const t=$('#tot');if(t)t.textContent='Duración total: '+fmt(total(cur))};
-$('#edit').addEventListener('input',e=>{
-if(e.target.id==='rn'){cur.name=e.target.value;save();return}
-const c=e.target.closest('[data-i]');if(!c)return;const x=cur.ex[c.dataset.i],q=f=>+c.querySelector(`[data-f="${f}"]`).value||0;
-x.n=c.querySelector('[data-f="n"]').value;x.w=q('wm')*60+q('ws');x.r=q('rm')*60+q('rs');x.s=Math.max(1,Math.floor(q('s')));save();tot()});
-$('#edit').addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(!b)return;const a=b.dataset.a,c=b.closest('[data-i]'),i=c?+c.dataset.i:-1,L=cur.ex;
-if(a==='back'){renderList();show('list');return}
-if(a==='play'){start(cur);return}
-if(a==='add')L.push({n:'Ejercicio '+(L.length+1),w:60,r:30,s:1});
-else if(a==='cp')L.splice(i+1,0,{...L[i]});
-else if(a==='del'&&L.length>1)L.splice(i,1);
-else if(a==='up'&&i>0)[L[i-1],L[i]]=[L[i],L[i-1]];
-else if(a==='dn'&&i<L.length-1)[L[i+1],L[i]]=[L[i],L[i+1]];
-save();renderEdit()});
+function show(v) {
+  ['list','edit','hist','cfg','play'].forEach(x => $('#' + x).hidden = x !== v);
+  $('main').classList.toggle('pl', v === 'play');
+  if(v !== 'play') ph('');
+  window.scrollTo(0,0);
+}
 
-/* reproductor */
-function build(r){const st=[{t:'p',n:'Prepárate',d:5,first:r.ex[0].n}];
-r.ex.forEach((e,i)=>{for(let k=1;k<=e.s;k++){if(e.w>0)st.push({t:'w',n:e.n,d:e.w,k,K:e.s,i,N:r.ex.length});if(e.r>0)st.push({t:'r',n:e.n,d:e.r,k,K:e.s,i,N:r.ex.length})}});
-while(st.length&&st[st.length-1].t==='r')st.pop();return st}
-function start(r){if(P)clearInterval(P.iv);const steps=build(r);let a=0;const cum=steps.map(s=>{const c=a;if(s.t!=='p')a+=s.d;return c});
-P={r,steps,cum,tot:a,idx:-1,paused:false};
-beep(1,.01);say(' ');lock();show('play');go(0);P.iv=setInterval(tick,200)}
-const lbl={p:'PREPÁRATE',w:'TRABAJO',r:'DESCANSO'};
-function spoken(d){const m=Math.floor(d/60),s=d%60;return (m?m+(m===1?' minuto':' minutos'):'')+(m&&s?' y ':'')+(s?s+' segundos':'')}
-function go(i,q){
-if(i>=P.steps.length)return finish();
-i=Math.max(0,i);P.idx=i;const s=P.steps[i],n=P.steps[i+1];P.end=Date.now()+s.d*1000;P.last=s.d;P.paused=false;
-document.body.className=s.t;
-$('#play').innerHTML=`<div class="pw"><div class="mn">
-<div class="top"><span id="el">00:00 / ${f2(P.tot)}</span><span>${lbl[s.t]}</span></div>
-<div class="nm">${esc(s.t==='p'?s.first:s.n)}</div><div id="tm">${f2(s.d)}</div><div id="bar"><i></i></div>
-<div class="up ${n?n.t:''}">${n?'SIGUE · '+lbl[n.t]+' · '+esc(n.t==='p'?'':n.n)+(n.t==='w'?' ('+n.k+'/'+n.K+')':''):'ÚLTIMO BLOQUE'}</div></div>
-<div class="sd"><div class="sr"><small>SERIE</small><b>${s.t==='p'?'–':s.k+'/'+s.K}</b><small>${s.t==='p'?'':'EJERCICIO '+(s.i+1)+'/'+s.N}</small></div>
-<div class="ctl"><button data-a="prev">⏮</button><button data-a="pp" id="pp">⏸</button><button data-a="nxt">⏭</button></div>
-<button class="st" data-a="stop">Terminar</button></div></div>`;
-if(q)return;flash();
-if(s.t==='p')say('Prepárate. Empezamos con '+s.first);
-else if(s.t==='w'){beep(990,.3);say(s.n+'.'+(s.K>1?' Serie '+s.k+' de '+s.K+'.':'')+' '+spoken(s.d))}
-else{beep(500,.3);const w=P.steps.slice(i+1).find(x=>x.t==='w');say('Descanso, '+spoken(s.d)+(w&&w.i!==s.i?'. Sigue '+w.n:''))}}
-function tick(){if(!P||P.paused)return;const ms=P.end-Date.now(),s=P.steps[P.idx];
-if(ms<=0){const ov=-ms;go(P.idx+1,ov>1500);if(P&&ov>0)P.end-=ov;return}
-const left=Math.ceil(ms/1000);if(left!==P.last){P.last=left;if(left<=3)beep(660,.12)}
-const t=$('#tm'),b=$('#bar i'),el=$('#el');if(t)t.textContent=f2(left);if(b)b.style.width=(100-ms/(s.d*10))+'%';
-if(el)el.textContent=f2(s.t==='p'?0:P.cum[P.idx]+s.d-left)+' / '+f2(P.tot)}
-function finish(){clearInterval(P.iv);db.hist.unshift({n:P.r.name,t:Date.now(),d:P.tot});db.hist=db.hist.slice(0,100);save();P=null;try{wl&&wl.release()}catch(e){}
-document.body.className='d';beep(990,.5);flash();say('Rutina terminada. Buen trabajo');
-$('#play').innerHTML=`<div class="pw"><div class="mn"><div class="nm">✅ ¡Rutina terminada!</div><div class="top" style="justify-content:center">BUEN TRABAJO</div></div><div class="sd" style="justify-content:center"><button class="st" data-a="stop">Volver</button></div></div>`}
-$('#play').addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(!b)return;const a=b.dataset.a;
-if(a==='stop'){if(P){clearInterval(P.iv);P=null}try{wl&&wl.release()}catch(e){}try{speechSynthesis.cancel()}catch(e){}renderList();show('list');return}
-if(!P)return;
-if(a==='nxt')go(P.idx+1);
-else if(a==='prev')go(P.idx-1);
-else if(a==='pp'){if(P.paused){P.end=Date.now()+P.rem;P.paused=false;b.textContent='⏸'}else{P.rem=P.end-Date.now();P.paused=true;b.textContent='▶'}}});
+const ph = c => { document.body.className = document.documentElement.className = c; };
+const lock = () => { try { navigator.wakeLock.request('screen').then(l => wl = l).catch(()=>{}); } catch(e){} };
+document.addEventListener('visibilitychange', () => { if(!document.hidden && P) lock(); });
+
+/* Audio Engine */
+function beep(f, d) {
+  if(!db.set.sound) return;
+  try {
+    ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+    const o = ac.createOscillator(), g = ac.createGain();
+    o.type = 'sawtooth';
+    o.frequency.value = f;
+    g.gain.setValueAtTime(0.001, ac.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.3 * (db.set.vol / 100), ac.currentTime + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + d);
+    o.connect(g);
+    g.connect(ac.destination);
+    o.start();
+    o.stop(ac.currentTime + d);
+  } catch(e){}
+}
+
+let VS = [];
+const loadV = () => { try { VS = speechSynthesis.getVoices().filter(v => /^es/i.test(v.lang)); } catch(e){} };
+try { loadV(); speechSynthesis.onvoiceschanged = () => { loadV(); if(!$('#cfg').hidden) renderCfg(); }; } catch(e){}
+const voice = () => VS.find(v => v.name === db.set.vn) || VS[0];
+
+const AC = new Map(), AU = new Audio(), SIL = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=';
+let ELBAD = false, sayId = 0;
+const unlock = () => { try { AU.src = SIL; AU.play().catch(()=>{}); } catch(e){} };
+
+function el(t) {
+  const k = db.set.ev + '|' + t;
+  if(AC.has(k)) return AC.get(k);
+  const p = fetch('https://api.elevenlabs.io/v1/text-to-speech/' + encodeURIComponent(db.set.ev) + '?output_format=mp3_44100_64', {
+    method: 'POST',
+    headers: { 'xi-api-key': db.set.ek, 'Content-Type': 'application/json', Accept: 'audio/mpeg' },
+    body: JSON.stringify({ text: t, model_id: 'eleven_multilingual_v2', voice_settings: { stability: 0.45, similarity_boost: 0.8 } })
+  }).then(r => { if(!r.ok) throw new Error(r.status); return r.blob(); })
+    .then(b => URL.createObjectURL(b))
+    .catch(x => { AC.delete(k); throw x; });
+  AC.set(k, p);
+  return p;
+}
+
+const pre = t => { if(db.set.voice && db.set.ek && !ELBAD) el(t).catch(()=>{}); };
+
+function say(t, m) {
+  if(!db.set.voice) return;
+  try { speechSynthesis.cancel(); AU.pause(); } catch(e){}
+  if(!db.set.ek || ELBAD) return say0(t, m);
+  const n = ++sayId;
+  el(t).then(u => {
+    if(n !== sayId) return;
+    AU.src = u; AU.volume = db.set.vol / 100;
+    return AU.play();
+  }).catch(x => {
+    if(/^(401|402|404|422)$/.test(x.message)) ELBAD = true;
+    if(n === sayId) say0(t, m);
+  });
+}
+
+function say0(t, m) {
+  if(!db.set.voice || !window.speechSynthesis) return;
+  try {
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(t), v = voice();
+    if(v) { u.voice = v; u.lang = v.lang; } else u.lang = 'es-419';
+    u.volume = db.set.vol / 100;
+    u.pitch = m === 'r' ? 0.95 : 1.05;
+    u.rate = 1.05;
+    speechSynthesis.speak(u);
+  } catch(e){}
+}
+
+function flash() {
+  if(!db.set.flash) return;
+  const f = $('#fl');
+  f.classList.remove('on');
+  void f.offsetWidth;
+  f.classList.add('on');
+}
+
+/* Pantalla de Lista */
+function renderList() {
+  $('#list').innerHTML = `
+    <div class="brand-header">
+      <div>
+        <div class="brand-tag">TACTICAL TIMER</div>
+        <h1>IRON CLOCK</h1>
+      </div>
+      <div style="display:flex;gap:4px">
+        <button data-a="hist">HISTORIAL</button>
+        <button data-a="cfg">AJUSTES</button>
+      </div>
+    </div>
+
+    ${db.routines.map(r => `
+      <div class="card active-card">
+        <div class="routine-title">${esc(r.name)}</div>
+        <div class="routine-meta">
+          <span>${r.ex.length} EJERCICIOS</span>
+          <span>TIEMPO: ${fmt(total(r))}</span>
+          <span>${r.ex.reduce((a,b)=>a+b.s,0)} SERIES</span>
+        </div>
+        <div class="btn-grid">
+          <button class="pri-volt" data-a="go" data-id="${r.id}">▶ INICIAR</button>
+          <button data-a="ed" data-id="${r.id}">EDITAR</button>
+          <button data-a="dup" data-id="${r.id}">COPIA</button>
+          <button class="dg" data-a="rm" data-id="${r.id}">✕</button>
+        </div>
+      </div>
+    `).join('')}
+
+    <button data-a="new" style="width:100%;margin-top:8px;border-style:dashed;">+ CREAR NUEVA RUTINA</button>
+  `;
+}
+
+$('#list').addEventListener('click', e => {
+  const b = e.target.closest('[data-a]');
+  if(!b) return;
+  const a = b.dataset.a, id = b.dataset.id;
+  const r = db.routines.find(x => x.id === id);
+
+  if(a === 'cfg') { renderCfg(); show('cfg'); }
+  else if(a === 'hist') { renderHist(); show('hist'); }
+  else if(a === 'new') {
+    const n = { id: uid(), name: 'NUEVA RUTINA', ex: [{ n: 'SERIE 1', w: 60, r: 30, s: 3 }] };
+    db.routines.push(n); save(); openEdit(n.id);
+  }
+  else if(a === 'ed') openEdit(r.id);
+  else if(a === 'go') start(r);
+  else if(a === 'dup') {
+    db.routines.push(JSON.parse(JSON.stringify({ ...r, id: uid(), name: r.name + ' (COPY)' })));
+    save(); renderList();
+  }
+  else if(a === 'rm' && confirm(`¿ELIMINAR ${r.name}?`)) {
+    db.routines = db.routines.filter(x => x !== r); save(); renderList();
+  }
+});
+
+/* Editor */
+function openEdit(id) {
+  cur = db.routines.find(r => r.id === id);
+  renderEdit();
+  show('edit');
+}
+
+function renderEdit() {
+  const t = (f, v) => `
+    <div class="dual-time">
+      <input data-f="${f}m" type="number" inputmode="numeric" min="0" value="${Math.floor(v/60)}">m
+      <span>:</span>
+      <input data-f="${f}s" type="number" inputmode="numeric" min="0" max="59" value="${v%60}">s
+    </div>`;
+
+  $('#edit').innerHTML = `
+    <div class="editor-top">
+      <button data-a="back">‹ VOLVER</button>
+      <button class="pri-volt" data-a="play">▶ ENTRENAR</button>
+    </div>
+
+    <input id="rn" class="routine-input" value="${esc(cur.name)}" placeholder="NOMBRE DE LA RUTINA">
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <span id="tot" style="font-size:11px;color:var(--volt);font-weight:700">DURACIÓN: 00:00</span>
+      <button data-a="add" style="font-size:11px">+ EJERCICIO</button>
+    </div>
+
+    ${cur.ex.map((e, i) => `
+      <div class="card" data-i="${i}">
+        <div style="display:flex;gap:4px">
+          <input data-f="n" value="${esc(e.n)}" style="flex:1" placeholder="EJERCICIO">
+          <button data-a="up">↑</button>
+          <button data-a="dn">↓</button>
+          <button data-a="cp">⧉</button>
+          <button class="dg" data-a="del">✕</button>
+        </div>
+        <div class="grid-time">
+          <label>TRABAJO ${t('w', e.w)}</label>
+          <label>DESCANSO ${t('r', e.r)}</label>
+          <label>SERIES
+            <div class="dual-time"><input data-f="s" type="number" inputmode="numeric" min="1" value="${e.s}"></div>
+          </label>
+        </div>
+      </div>
+    `).join('')}
+  `;
+  totCalc();
+}
+
+const totCalc = () => {
+  const t = $('#tot');
+  if(t) t.textContent = `DURACIÓN TOTAL ESTIMADA: ${fmt(total(cur))}`;
+};
+
+$('#edit').addEventListener('input', e => {
+  if(e.target.id === 'rn') { cur.name = e.target.value.toUpperCase(); save(); return; }
+  const c = e.target.closest('[data-i]');
+  if(!c) return;
+  const x = cur.ex[c.dataset.i];
+  const q = f => +c.querySelector(`[data-f="${f}"]`).value || 0;
+  x.n = c.querySelector('[data-f="n"]').value.toUpperCase();
+  x.w = q('wm') * 60 + q('ws');
+  x.r = q('rm') * 60 + q('rs');
+  x.s = Math.max(1, Math.floor(q('s')));
+  save();
+  totCalc();
+});
+
+$('#edit').addEventListener('click', e => {
+  const b = e.target.closest('[data-a]');
+  if(!b) return;
+  const a = b.dataset.a, c = b.closest('[data-i]'), i = c ? +c.dataset.i : -1, L = cur.ex;
+
+  if(a === 'back') { renderList(); show('list'); return; }
+  if(a === 'play') { start(cur); return; }
+  if(a === 'add') L.push({ n: 'EJERCICIO ' + (L.length + 1), w: 45, r: 15, s: 3 });
+  else if(a === 'cp') L.splice(i + 1, 0, { ...L[i] });
+  else if(a === 'del' && L.length > 1) L.splice(i, 1);
+  else if(a === 'up' && i > 0) [L[i-1], L[i]] = [L[i], L[i-1]];
+  else if(a === 'dn' && i < L.length - 1) [L[i+1], L[i]] = [L[i], L[i+1]];
+
+  save();
+  renderEdit();
+});
+
+/* Reproductor de Entrenamiento (HUD) */
+function build(r) {
+  const st = [{ t: 'p', n: 'PREPÁRATE', d: 5, first: r.ex[0].n }];
+  r.ex.forEach((e, i) => {
+    for(let k = 1; k <= e.s; k++) {
+      if(e.w > 0) st.push({ t: 'w', n: e.n, d: e.w, k, K: e.s, i, N: r.ex.length });
+      if(e.r > 0) st.push({ t: 'r', n: e.n, d: e.r, k, K: e.s, i, N: r.ex.length });
+    }
+  });
+  while(st.length && st[st.length - 1].t === 'r') st.pop();
+  return st;
+}
+
+function start(r) {
+  if(P) clearInterval(P.iv);
+  const steps = build(r);
+  let a = 0;
+  const cum = steps.map(s => { const c = a; if(s.t !== 'p') a += s.d; return c; });
+  P = { r, steps, cum, tot: a, idx: -1, paused: false };
+
+  beep(880, .05); unlock(); say0(' '); lock();
+  pre(phr(0).t);
+  show('play');
+  go(0);
+  P.iv = setInterval(tick, 200);
+}
+
+const lbl = { p: 'PREPARACIÓN', w: 'TRABAJO', r: 'DESCANSO' };
+
+function spoken(d) {
+  const m = Math.floor(d/60), s = d%60;
+  return (m ? m + (m === 1 ? ' minuto' : ' minutos') : '') + (m && s ? ' y ' : '') + (s ? s + ' segundos' : '');
+}
+
+function phr(i) {
+  const s = P.steps[i];
+  if(!s) return null;
+  if(s.say) return s.say;
+  let t, m = 'w';
+  if(s.t === 'p') t = 'Atención. Iniciamos con ' + s.first + '.';
+  else if(s.t === 'w') t = s.n + '.' + (s.K > 1 ? ' Serie ' + s.k + ' de ' + s.K + '.' : '') + ' ' + spoken(s.d) + '.';
+  else {
+    const w = P.steps.slice(i + 1).find(x => x.t === 'w');
+    m = 'r';
+    t = 'Descanso, ' + spoken(s.d) + '.' + (w && w.i !== s.i ? ' Siguiente: ' + w.n + '.' : '');
+  }
+  return s.say = { t, m };
+}
+
+function go(i, q) {
+  if(i >= P.steps.length) return finish();
+  i = Math.max(0, i);
+  P.idx = i;
+  const s = P.steps[i], n = P.steps[i+1];
+  P.end = Date.now() + s.d * 1000;
+  P.last = s.d;
+  P.totalStepTime = s.d;
+  P.paused = false;
+
+  ph(s.t);
+
+  $('#play').innerHTML = `
+    <div class="hud-layout">
+      <div class="hud-header">
+        <span class="hud-phase-tag">${lbl[s.t]}</span>
+        <span class="hud-total-time" id="el">00:00 / ${f2(P.tot)}</span>
+        <button data-a="stop" style="padding:4px 8px;font-size:11px;">✕ SALIR</button>
+      </div>
+
+      <div class="clock-display">
+        <div class="clock-title">${esc(s.t === 'p' ? s.first : s.n)}</div>
+        <div id="tm" class="clock-digits">${f2(s.d)}</div>
+        
+        <div class="progress-rail">
+          <div id="pRail" class="progress-rail-fill"></div>
+        </div>
+      </div>
+
+      <div class="hud-footer">
+        <div class="hud-up-next">
+          <span style="color:var(--tx-muted)">SIGUIENTE BLOQUE:</span>
+          <b>${n ? esc(n.n) + (n.t === 'w' ? ' (S'+n.k+')' : ' [DESCANSO]') : 'FINAL'}</b>
+        </div>
+
+        <div class="hud-stats-bar">
+          <div>SERIE: <span>${s.t === 'p' ? '–' : s.k + '/' + s.K}</span></div>
+          <div>EJERCICIO: <span>${s.t === 'p' ? '–' : (s.i + 1) + '/' + s.N}</span></div>
+        </div>
+
+        <div class="tactical-controls">
+          <button data-a="adj" data-v="-10">-10S</button>
+          <button data-a="prev">⏮</button>
+          <button class="btn-main-action" data-a="pp" id="ppBtn">PAUSA</button>
+          <button data-a="nxt">⏭</button>
+          <button data-a="adj" data-v="10">+10S</button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  if(q) return;
+  flash();
+  if(s.t === 'w') beep(950, .3); else if(s.t === 'r') beep(450, .3);
+  const f = phr(i); say(f.t, f.m);
+  const nf = phr(i+1); if(nf) pre(nf.t);
+}
+
+function tick() {
+  if(!P || P.paused) return;
+  const ms = P.end - Date.now(), s = P.steps[P.idx];
+  if(ms <= 0) {
+    const ov = -ms;
+    go(P.idx + 1, ov > 1500);
+    if(P && ov > 0) P.end -= ov;
+    return;
+  }
+
+  const left = Math.ceil(ms / 1000);
+  if(left !== P.last) {
+    P.last = left;
+    if(left <= 3) beep(800, .12);
+  }
+
+  const t = $('#tm'), el = $('#el'), rail = $('#pRail');
+  if(t) t.textContent = f2(left);
+  if(el) el.textContent = `${f2(s.t === 'p' ? 0 : P.cum[P.idx] + s.d - left)} / ${f2(P.tot)}`;
+  if(rail && P.totalStepTime > 0) {
+    const pct = Math.max(0, Math.min(100, (1 - (ms / (P.totalStepTime * 1000))) * 100));
+    rail.style.width = pct + '%';
+  }
+}
+
+function finish() {
+  clearInterval(P.iv);
+  db.hist.unshift({ n: P.r.name, t: Date.now(), d: P.tot });
+  db.hist = db.hist.slice(0, 100);
+  save();
+  P = null;
+  try { wl && wl.release(); } catch(e){}
+  ph('d'); beep(1100, .6); flash(); say('Entrenamiento completado.');
+
+  $('#play').innerHTML = `
+    <div class="hud-layout" style="justify-content:center;text-align:center;">
+      <h1 style="font-size:62px;color:var(--volt);margin-bottom:10px">RUTINA COMPLETADA</h1>
+      <p style="color:var(--tx-muted);margin-bottom:20px;letter-spacing:0.1em">BUEN TRABAJO EN EL HIERRO.</p>
+      <button class="pri-volt" data-a="stop" style="max-width:200px;margin:0 auto">VOLVER AL MENÚ</button>
+    </div>
+  `;
+}
+
+$('#play').addEventListener('click', e => {
+  const b = e.target.closest('[data-a]');
+  if(!b) return;
+  const a = b.dataset.a;
+
+  if(a === 'stop') {
+    if(P) { clearInterval(P.iv); P = null; }
+    try { wl && wl.release(); } catch(e){}
+    try { speechSynthesis.cancel(); } catch(e){}
+    renderList(); show('list');
+    return;
+  }
+  if(!P) return;
+
+  if(a === 'nxt') go(P.idx + 1);
+  else if(a === 'prev') go(P.idx - 1);
+  else if(a === 'adj') {
+    const add = +b.dataset.v * 1000;
+    P.end += add;
+    P.totalStepTime += +b.dataset.v;
+  }
+  else if(a === 'pp') {
+    const btn = $('#ppBtn');
+    if(P.paused) {
+      P.end = Date.now() + P.rem;
+      P.paused = false;
+      btn.textContent = 'PAUSA';
+    } else {
+      P.rem = P.end - Date.now();
+      P.paused = true;
+      btn.textContent = 'REANUDAR';
+    }
+  }
+});
+
+/* Configuración */
+function renderCfg() {
+  const v0 = voice();
+  $('#cfg').innerHTML = `
+    <div class="editor-top">
+      <button data-a="back">‹ VOLVER</button>
+      <h1 style="font-size:24px">AJUSTES</h1>
+    </div>
+
+    <div class="card">
+      <div class="sw-row">
+        <span>SONIDO ZUMBADOR</span>
+        <input type="checkbox" data-s="sound" ${db.set.sound?'checked':''}>
+      </div>
+      <div class="sw-row">
+        <span>VOZ GUÍA</span>
+        <input type="checkbox" data-s="voice" ${db.set.voice?'checked':''}>
+      </div>
+      <div class="sw-row">
+        <span>DESTELLO FLASH</span>
+        <input type="checkbox" data-s="flash" ${db.set.flash?'checked':''}>
+      </div>
+      <div class="sw-row">
+        <span>VOLUMEN (${db.set.vol}%)</span>
+        <input type="range" data-s="vol" min="0" max="100" value="${db.set.vol}" style="width:110px">
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="font-size:12px;font-weight:700;color:var(--tx-muted);margin-bottom:6px">VOZ DEL NAVEGADOR</div>
+      ${VS.length ? `<select data-s="vn" style="width:100%">${VS.map(v => `<option value="${esc(v.name)}" ${v0 && v.name === v0.name ? 'selected' : ''}>${esc(v.name)}</option>`).join('')}</select>` : '<span style="font-size:12px;color:var(--tx-dark)">Sin voces del sistema</span>'}
+    </div>
+
+    <div class="card">
+      <div style="font-size:12px;font-weight:700;color:var(--tx-muted);margin-bottom:6px">ELEVENLABS API (OPCIONAL)</div>
+      <input id="ek" type="password" placeholder="xi-api-key..." value="${esc(db.set.ek||'')}" style="width:100%;margin-bottom:6px">
+      <input id="ev" value="${esc(db.set.ev)}" placeholder="Voice ID" style="width:100%">
+      <div id="vst" style="font-size:11px;color:var(--tx-muted);margin-top:6px"></div>
+    </div>
+
+    <button data-a="tv" style="width:100%;margin-top:4px">PROBAR VOZ</button>
+  `;
+}
+
+$('#cfg').addEventListener('input', e => {
+  if(e.target.id === 'ek' || e.target.id === 'ev') {
+    db.set[e.target.id] = e.target.value.trim();
+    ELBAD = false;
+    if(e.target.id === 'ev') AC.clear();
+    save(); return;
+  }
+  const k = e.target.dataset.s;
+  if(k) {
+    db.set[k] = e.target.type === 'checkbox' ? e.target.checked : (k === 'vn' ? e.target.value : +e.target.value);
+    save();
+  }
+});
+
+$('#cfg').addEventListener('click', async e => {
+  const b = e.target.closest('[data-a]');
+  if(!b) return;
+  const a = b.dataset.a, st = $('#vst');
+  if(a === 'back') { renderList(); show('list'); }
+  else if(a === 'tv') {
+    unlock();
+    if(!db.set.ek) { say0('Test de voz completado.'); return; }
+    st.textContent = 'Contactando ElevenLabs...';
+    try {
+      await el('Test de voz');
+      st.textContent = 'Conexión exitosa.';
+      say('Test de voz');
+    } catch(err) {
+      st.textContent = 'Error API. Usando voz del sistema.';
+      say0('Test de voz');
+    }
+  }
+});
+
+/* Historial */
+function renderHist() {
+  $('#hist').innerHTML = `
+    <div class="editor-top">
+      <button data-a="back">‹ VOLVER</button>
+      <h1 style="font-size:24px">REGISTRO DE SESIONES</h1>
+    </div>
+
+    ${db.hist.length ? `
+      ${db.hist.map(h => `
+        <div class="card" style="display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <div style="font-weight:800;font-size:14px">${esc(h.n)}</div>
+            <div style="font-size:11px;color:var(--tx-muted)">${new Date(h.t).toLocaleDateString('es-CO', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' })}</div>
+          </div>
+          <b style="font-family:var(--font-mono);color:var(--volt)">${fmt(h.d)}</b>
+        </div>
+      `).join('')}
+      <button class="dg" data-a="clr" style="width:100%;margin-top:10px">BORRAR REGISTRO</button>
+    ` : '<p style="color:var(--tx-muted);text-align:center;margin-top:30px">SIN REGISTROS DE ENTRENAMIENTO.</p>'}
+  `;
+}
+
+$('#hist').addEventListener('click', e => {
+  const b = e.target.closest('[data-a]');
+  if(!b) return;
+  if(b.dataset.a === 'back') { renderList(); show('list'); }
+  else if(b.dataset.a === 'clr' && confirm('¿VACIAR TODO EL HISTORIAL?')) {
+    db.hist = []; save(); renderHist();
+  }
+});
+
 renderList();
-</script></body></html>
+</script>
+</body>
+</html>
