@@ -34,6 +34,7 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
 
 body {
   margin: 0;
@@ -368,6 +369,25 @@ body.p .progress-rail-fill { background: var(--warning); box-shadow: 0 0 10px va
 }
 .btn-main-action:active { background: #dcdcdc !important; }
 
+/* Fotos de ejercicio */
+.photo-row { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+.thumb { width: 52px; height: 52px; flex: none; object-fit: cover; border: 1px solid var(--panel-border); border-radius: var(--corner); background: #0d0e12; }
+.thumb-ph { display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--tx-dark); }
+.file-btn { font-family: var(--font-hud); font-size: 12px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; border: 1px solid var(--panel-border); background: var(--panel); color: var(--tx-main); border-radius: var(--corner); padding: 8px 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+.file-btn:active { background: var(--panel-active); }
+.file-btn { position: relative; overflow: hidden; }
+.file-btn input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; font-size: 0; padding: 0; border: 0; }
+.ex-photo { display: block; width: 100%; height: min(20vh, 170px); cursor: zoom-in; object-fit: contain; margin: 0 auto 12px; background: #0d0e12; border: 1px solid var(--panel-border); border-radius: var(--corner); }
+@media (max-height: 520px) { .ex-photo { display: none; } }
+
+/* Foto ampliada: baja desde arriba */
+#pv { position: fixed; left: 0; right: 0; top: 0; z-index: 60; display: flex; flex-direction: column; align-items: center; gap: 8px;
+  padding: calc(12px + env(safe-area-inset-top, 0px)) 12px 12px; background: rgba(7,8,10,.97); border-bottom: 2px solid var(--volt);
+  box-shadow: 0 12px 40px rgba(0,0,0,.6); transform: translateY(-110%); transition: transform .3s cubic-bezier(.2,.8,.2,1); pointer-events: none; }
+#pv.open { transform: translateY(0); pointer-events: auto; }
+#pv img { max-width: 100%; max-height: 78vh; max-height: 78dvh; object-fit: contain; border-radius: var(--corner); }
+#pv small { font-size: 11px; letter-spacing: .12em; color: var(--tx-muted); }
+
 /* Flash FX */
 #fl { position: fixed; inset: 0; background: #fff; opacity: 0; pointer-events: none; z-index: 99; }
 #fl.on { animation: flashFX .35s cubic-bezier(0.1, 0.9, 0.2, 1); }
@@ -387,6 +407,7 @@ body.p .progress-rail-fill { background: var(--warning); box-shadow: 0 0 10px va
 <body>
 
 <div id="fl"></div>
+<div id="pv"><img alt=""><small>TOCA PARA CERRAR</small></div>
 
 <main>
   <section id="list"></section>
@@ -415,7 +436,7 @@ if(!db.routines.length) {
   ];
 }
 
-const save = () => { try { localStorage.setItem('gt1', JSON.stringify(db)); } catch(e){} };
+const save = () => { try { localStorage.setItem('gt1', JSON.stringify(db)); return true; } catch(e){ return false; } };
 const total = r => r.ex.reduce((a, e) => a + (e.w + e.r) * e.s, 0);
 
 let cur = null, P = null, ac = null, wl = null;
@@ -501,6 +522,10 @@ function say0(t, m) {
     speechSynthesis.speak(u);
   } catch(e){}
 }
+
+function openPv(src) { $('#pv img').src = src; $('#pv').classList.add('open'); }
+function closePv() { $('#pv').classList.remove('open'); }
+$('#pv').addEventListener('click', closePv);
 
 function flash() {
   if(!db.set.flash) return;
@@ -612,6 +637,11 @@ function renderEdit() {
             <div class="dual-time"><input data-f="s" type="number" inputmode="numeric" min="1" value="${e.s}"></div>
           </label>
         </div>
+        <div class="photo-row">
+          ${e.img ? `<img class="thumb" src="${e.img}" alt="">` : '<div class="thumb thumb-ph">📷</div>'}
+          <label class="file-btn">${e.img ? 'CAMBIAR FOTO' : 'AÑADIR FOTO'}<input type="file" accept="image/*" data-f="img"></label>
+          ${e.img ? '<button class="dg" data-a="rmimg">QUITAR</button>' : ''}
+        </div>
       </div>
     `).join('')}
   `;
@@ -637,6 +667,40 @@ $('#edit').addEventListener('input', e => {
   totCalc();
 });
 
+async function shrink(file, max = 640, q = 0.72) {
+  let src, w, h;
+  try {
+    src = await new Promise((ok, no) => {
+      const u = URL.createObjectURL(file), im = new Image();
+      im.onload = () => { URL.revokeObjectURL(u); ok(im); };
+      im.onerror = () => { URL.revokeObjectURL(u); no(new Error('img')); };
+      im.src = u;
+    });
+    w = src.naturalWidth; h = src.naturalHeight;
+  } catch(e) {
+    src = await createImageBitmap(file);
+    w = src.width; h = src.height;
+  }
+  const k = Math.min(1, max / Math.max(w, h)), cv = document.createElement('canvas');
+  cv.width = Math.round(w * k); cv.height = Math.round(h * k);
+  cv.getContext('2d').drawImage(src, 0, 0, cv.width, cv.height);
+  return cv.toDataURL('image/jpeg', q);
+}
+
+$('#edit').addEventListener('change', async e => {
+  if(e.target.dataset.f !== 'img') return;
+  const f = e.target.files[0], c = e.target.closest('[data-i]');
+  if(!f || !c) return;
+  const lb = e.target.closest('.file-btn');
+  if(lb && lb.firstChild) lb.firstChild.textContent = 'PROCESANDO… ';
+  const x = cur.ex[c.dataset.i], old = x.img;
+  try {
+    x.img = await shrink(f);
+    if(!save()) { if(old) x.img = old; else delete x.img; alert('No hay espacio para guardar esta foto. Quita fotos de otros ejercicios e intenta de nuevo.'); }
+  } catch(err) { alert('No pude leer esa imagen (' + (f.type || 'formato desconocido') + '). Prueba con otra foto.'); }
+  renderEdit();
+});
+
 $('#edit').addEventListener('click', e => {
   const b = e.target.closest('[data-a]');
   if(!b) return;
@@ -646,6 +710,7 @@ $('#edit').addEventListener('click', e => {
   if(a === 'play') { start(cur); return; }
   if(a === 'add') L.push({ n: 'EJERCICIO ' + (L.length + 1), w: 45, r: 15, s: 3 });
   else if(a === 'cp') L.splice(i + 1, 0, { ...L[i] });
+  else if(a === 'rmimg') delete L[i].img;
   else if(a === 'del' && L.length > 1) L.splice(i, 1);
   else if(a === 'up' && i > 0) [L[i-1], L[i]] = [L[i], L[i-1]];
   else if(a === 'dn' && i < L.length - 1) [L[i+1], L[i]] = [L[i], L[i+1]];
@@ -656,11 +721,11 @@ $('#edit').addEventListener('click', e => {
 
 /* Reproductor de Entrenamiento (HUD) */
 function build(r) {
-  const st = [{ t: 'p', n: 'PREPÁRATE', d: 5, first: r.ex[0].n }];
+  const st = [{ t: 'p', n: 'PREPÁRATE', d: 5, first: r.ex[0].n, img: r.ex[0].img }];
   r.ex.forEach((e, i) => {
     for(let k = 1; k <= e.s; k++) {
-      if(e.w > 0) st.push({ t: 'w', n: e.n, d: e.w, k, K: e.s, i, N: r.ex.length });
-      if(e.r > 0) st.push({ t: 'r', n: e.n, d: e.r, k, K: e.s, i, N: r.ex.length });
+      if(e.w > 0) st.push({ t: 'w', n: e.n, d: e.w, k, K: e.s, i, N: r.ex.length, img: e.img });
+      if(e.r > 0) st.push({ t: 'r', n: e.n, d: e.r, k, K: e.s, i, N: r.ex.length, img: e.img });
     }
   });
   while(st.length && st[st.length - 1].t === 'r') st.pop();
@@ -714,6 +779,9 @@ function go(i, q) {
   P.paused = false;
 
   ph(s.t);
+  const nw = P.steps.slice(i + 1).find(x => x.t === 'w');
+  const im = (s.t === 'r' && nw && nw.i !== s.i) ? nw.img : s.img;
+  if($('#pv').classList.contains('open')) { if(im) $('#pv img').src = im; else closePv(); }
 
   $('#play').innerHTML = `
     <div class="hud-layout">
@@ -724,6 +792,7 @@ function go(i, q) {
       </div>
 
       <div class="clock-display">
+        ${im ? `<img class="ex-photo" data-a="photo" src="${im}" alt="">` : ''}
         <div class="clock-title">${esc(s.t === 'p' ? s.first : s.n)}</div>
         <div id="tm" class="clock-digits">${f2(s.d)}</div>
         
@@ -793,7 +862,7 @@ function finish() {
   save();
   P = null;
   try { wl && wl.release(); } catch(e){}
-  ph('d'); beep(1100, .6); flash(); say('Entrenamiento completado.');
+  closePv(); ph('d'); beep(1100, .6); flash(); say('Entrenamiento completado.');
 
   $('#play').innerHTML = `
     <div class="hud-layout" style="justify-content:center;text-align:center;">
@@ -810,12 +879,15 @@ $('#play').addEventListener('click', e => {
   const a = b.dataset.a;
 
   if(a === 'stop') {
+    closePv(); sayId++;
     if(P) { clearInterval(P.iv); P = null; }
+    $('#play').innerHTML = '';
     try { wl && wl.release(); } catch(e){}
-    try { speechSynthesis.cancel(); } catch(e){}
+    try { speechSynthesis.cancel(); AU.pause(); } catch(e){}
     renderList(); show('list');
     return;
   }
+  if(a === 'photo') { openPv(b.getAttribute('src')); return; }
   if(!P) return;
 
   if(a === 'nxt') go(P.idx + 1);
